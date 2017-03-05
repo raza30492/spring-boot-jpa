@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  *
@@ -31,42 +30,38 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/users")
 public class UserRestController {
-    
-    @Autowired UserService userService;
-    
+
+    @Autowired
+    UserService userService;
+
     @GetMapping(value = {"/{userId}"})
-    ResponseEntity<?> getUser(@PathVariable("userId") Long id){
+    ResponseEntity<?> getUser(@PathVariable("userId") Long id) {
         User user = userService.findOne(id);
         return ResponseEntity.ok(userToResource(user));
     }
-    
+
     @GetMapping
-    ResponseEntity<?> getAllUsers(){
+    ResponseEntity<?> getAllUsers() {
         List<User> userList = userService.findAll();
         return ResponseEntity.ok(userToResources(userList));
     }
-    
+
     @PostMapping
-    ResponseEntity<?> save(@RequestBody User user){
-        System.out.println(user);
-       user = userService.save(user);
-       
-        URI location = ServletUriComponentsBuilder
-                            .fromCurrentRequest().path("/{id}")
-                            .buildAndExpand(user.getId()).toUri();
-       
-       return ResponseEntity.created(location).build();
+    ResponseEntity<?> save(@RequestBody User user) {
+        user = userService.save(user);
+        Link selfLink = linkTo(UserRestController.class).slash(user.getId()).withSelfRel();
+        return ResponseEntity.created(URI.create(selfLink.getHref())).build();
     }
-    
-    private Resources<Resource<User>> userToResources(List<User> users){
+
+    private Resources<Resource<User>> userToResources(List<User> users) {
         Link selfLink = linkTo(methodOn(UserRestController.class).getAllUsers()).withSelfRel();
         List<Resource<User>> userResources = users.stream().map(user -> userToResource(user)).collect(Collectors.toList());
         return new Resources<>(userResources, selfLink);
     }
-    
-    private Resource<User> userToResource(User user){
+
+    private Resource<User> userToResource(User user) {
         Link selfLink = linkTo(methodOn(UserRestController.class).getUser(user.getId())).withSelfRel();
         return new Resource<>(user, selfLink);
     }
-  
+
 }
