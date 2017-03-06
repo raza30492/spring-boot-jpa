@@ -5,12 +5,14 @@
  */
 package com.example.app.service;
 
+import com.example.app.assembler.UserAssembler;
 import com.example.app.entity.User;
 import static com.example.app.expression.UserExpression.*;
 import com.example.app.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
