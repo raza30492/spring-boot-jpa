@@ -14,6 +14,8 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import org.hibernate.service.spi.InjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -44,6 +46,10 @@ public class UserService {
     
     public List<User> findAll(){
         return userRepository.findAll();
+    }
+    
+    public Page<User> findAllByPage(Pageable pageable){
+        return userRepository.findAll(pageable);
     }
     
     public void delete(Long id){

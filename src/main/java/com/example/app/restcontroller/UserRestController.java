@@ -12,7 +12,11 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
@@ -41,13 +45,19 @@ public class UserRestController {
         User user = userService.findOne(id);
         return ResponseEntity.ok(userAssembler.toResource(user));
     }
-
+    
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
-        List<User> users = userService.findAll();
-        List<Resource> resources = userAssembler.toResources(users);
-        return ResponseEntity.ok(new Resources<>(resources, linkTo(UserRestController.class).withSelfRel()));
+    public PagedResources<User> getAllUsers(Pageable pageable, PagedResourcesAssembler assembler) {
+        Page<User> page = userService.findAllByPage(pageable);
+        return assembler.toResource(page, userAssembler);
     }
+
+//    @GetMapping
+//    public ResponseEntity<?> getAllUsers() {
+//        List<User> users = userService.findAll();
+//        List<Resource> resources = userAssembler.toResources(users);
+//        return ResponseEntity.ok(new Resources<>(resources, linkTo(UserRestController.class).withSelfRel()));
+//    }
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody User user) {
