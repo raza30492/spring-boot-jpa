@@ -52,20 +52,20 @@ public class UserRestController {
         return assembler.toResource(page, userAssembler);
     }
 
-//    @GetMapping
-//    public ResponseEntity<?> getAllUsers() {
-//        List<User> users = userService.findAll();
-//        List<Resource> resources = userAssembler.toResources(users);
-//        return ResponseEntity.ok(new Resources<>(resources, linkTo(UserRestController.class).withSelfRel()));
-//    }
-
     @PostMapping
     public ResponseEntity<?> save(@RequestBody User user) {
         user = userService.save(user);
         Link selfLink = linkTo(UserRestController.class).slash(user.getId()).withSelfRel();
         return ResponseEntity.created(URI.create(selfLink.getHref())).build();
     }
-
+    
+//    @GetMapping
+//    public ResponseEntity<?> getAllUsers() {
+//        List<User> users = userService.findAll();
+//        List<Resource> resources = userAssembler.toResources(users);
+//        return ResponseEntity.ok(new Resources<>(resources, linkTo(UserRestController.class).withSelfRel()));
+//    }
+//
 //    private Resources<Resource<User>> userToResources(List<User> users) {
 //        Link selfLink = linkTo(methodOn(UserRestController.class).getAllUsers()).withSelfRel();
 //        List<Resource<User>> userResources = users.stream().map(user -> userToResource(user)).collect(Collectors.toList());
@@ -76,5 +76,5 @@ public class UserRestController {
 //        Link selfLink = linkTo(methodOn(UserRestController.class).getUser(user.getId())).withSelfRel();
 //        return new Resource<>(user, selfLink);
 //    }
-
+    
 }
